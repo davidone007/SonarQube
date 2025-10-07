@@ -1,9 +1,6 @@
-# 🧩 Reporte de Implementación de SonarQube – AromaLife Backend
+# SonarQube – AromaLife Backend
 
-**Autor:** David Fajardo  
-**Universidad:** Universidad Icesi  
-**Curso:** Ingeniería de Software 5 (8vo Semestre)  
-**Fecha:** Octubre 2024
+## Nota: La VM donde se localiza SonarQube se elimino por efectos de costos, si quiere probar debe desplegar otra vez la VM usando los scripts proporcionados.
 
 ---
 
