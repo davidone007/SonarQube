@@ -254,7 +254,7 @@ terraform apply -auto-approve
 
 ## 📝 Paso 3: Información del Despliegue
 
-Al finalizar, Terraform proporcionó la información de acceso:
+Al finalizar, el script proporcionó la información de acceso:
 
 📸 **Captura: Información de Despliegue**
 
@@ -310,6 +310,7 @@ Se creó el proyecto `aromalife-backend` en SonarQube y se generó el token de a
 
 ![Create Project](./img/create-project.png)
 
+
 **Configuración del Proyecto:**
 - **Project Key:** aromalife-backend
 - **Project Name:** AromaLife Backend
@@ -324,6 +325,8 @@ Se configuraron los secrets necesarios en el repositorio de GitHub para la integ
 📸 **Captura: GitHub Secrets**
 
 ![GitHub Secrets](./img/secrets.png)
+
+![Create Project](./img/CI-Sonar.png)
 
 **Secrets Configurados:**
 - `SONAR_TOKEN`: Token de autenticación de SonarQube
@@ -360,7 +363,7 @@ Después de hacer commit y push al repositorio, el pipeline se ejecutó automát
 
 📸 **Captura: Pipeline de GitHub Actions**
 
-![CI Pipeline](./img/CI-Sonar.png)
+![CI Pipeline](./img/github-actions-pipelines.png)
 
 **Jobs Ejecutados:**
 - ✅ Trivy Security Scan: Completado
@@ -402,16 +405,11 @@ Los resultados del análisis son visibles en el dashboard de SonarQube en Azure.
 
 ## 🛡️ Paso 12: Reporte de Seguridad
 
-El análisis de seguridad con Trivy identificó vulnerabilidades en las dependencias.
+Al final en GitHub se genera un .md con un reporte de seguridad:
 
 📸 **Captura: Resumen de Seguridad**
 
 ![Security Summary Report](./img/security-summary-report.png)
-
-**Resultados del Escaneo de Seguridad:**
-- Vulnerabilidades detectadas en dependencias
-- Clasificación por severidad (Critical, High, Medium, Low)
-- Recomendaciones de actualización
 
 ---
 
