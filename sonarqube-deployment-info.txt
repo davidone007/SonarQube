@@ -1,0 +1,25 @@
+========================================
+  SonarQube Azure Deployment Info
+========================================
+
+Fecha de despliegue: Tue Oct  7 16:13:22 -05 2025
+Suscripción: Azure for Students
+
+Información de la VM:
+  • IP Pública: 172.174.1.90
+  • URL SonarQube: http://172.174.1.90:9000
+  • Comando SSH: ssh azureuser@172.174.1.90
+
+Credenciales de la VM:
+  • Usuario: azureuser
+  • Contraseña: SonarQube2024!@#
+
+Credenciales de SonarQube:
+  • Usuario: admin
+  • Contraseña: admin
+
+GitHub Secrets a configurar:
+  • SONAR_TOKEN: <generar desde SonarQube>
+  • SONAR_HOST_URL: http://172.174.1.90:9000
+
+========================================
