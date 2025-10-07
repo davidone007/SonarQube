@@ -37,6 +37,7 @@ jobs:
       - name: 📊 Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
         if: always()
+        continue-on-error: true  # No fallar si GitHub Advanced Security no está habilitado
         with:
           sarif_file: 'trivy-results.sarif'
 
