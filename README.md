@@ -382,9 +382,8 @@ El pipeline genera y almacena varios artefactos para revisión posterior.
 ![Pipeline Artifacts](./img/artifacts.png)
 
 **Artefactos Disponibles:**
-- `trivy-report-json`: Reporte de vulnerabilidades en formato JSON
-- `trivy-report-sarif`: Reporte en formato SARIF
-- `security-summary`: Resumen consolidado de seguridad
+- `trivy-security-report`: Reporte de vulnerabilidades
+- `coverage-report`: Reporte de cobertura
 
 ---
 
@@ -403,13 +402,86 @@ Los resultados del análisis son visibles en el dashboard de SonarQube en Azure.
 
 ---
 
-## 🛡️ Paso 12: Reporte de Seguridad
+## 🛡️ Paso 12: Reporte de Seguridad con Trivy
 
-Al final en GitHub se genera un .md con un reporte de seguridad:
+El análisis de seguridad con Trivy genera un reporte detallado de vulnerabilidades encontradas en las dependencias del proyecto.
 
-📸 **Captura: Resumen de Seguridad**
+📸 **Captura: Reporte de Trivy**
+
+![Trivy Report](./img/trivy-report.png)
+
+**Información del Reporte Trivy:**
+- Escaneo completo del sistema de archivos
+- Detección de vulnerabilidades en dependencias npm
+- Clasificación por severidad (CRITICAL, HIGH, MEDIUM, LOW)
+- Formato SARIF para integración con GitHub Security
+
+### 📊 Reporte de Cobertura de Tests
+
+El pipeline también genera reportes de cobertura de código usando Jest.
+
+📸 **Captura: Reporte de Cobertura**
+
+![Coverage Report](./img/coverage-report.png)
+
+**Métricas de Cobertura:**
+- Cobertura de líneas: 27.3%
+- Reportes en formato LCOV
+- Integración con SonarQube para visualización
+
+---
+
+## ⚠️ Nota Importante sobre Warnings en el Pipeline
+
+Durante la ejecución del pipeline pueden aparecer algunos **warnings** (advertencias) que no afectan el funcionamiento general:
+
+### 1. Tests Fallidos
+Algunos tests pueden fallar porque **este código proviene del repositorio anterior** (AromaLife) donde no todos los tests estaban completamente implementados o actualizados. Estos fallos no bloquean el pipeline gracias a:
+
+```yaml
+- name: 🧪 Run tests with coverage
+  run: npm run test:cov
+  continue-on-error: true  # Permite que el pipeline continúe aunque fallen tests
+```
+
+### 2. GitHub Advanced Security (SARIF Upload)
+El upload de resultados de Trivy en formato SARIF puede generar una advertencia:
+
+```yaml
+- name: 📊 Upload Trivy results to GitHub Security
+  uses: github/codeql-action/upload-sarif@v3
+  if: always()
+  continue-on-error: true # No fallar si GitHub Advanced Security no está habilitado
+```
+
+**Razón:** GitHub Advanced Security es una característica premium que permite visualizar los resultados de seguridad en la pestaña "Security" del repositorio. Sin embargo:
+- ✅ **El escaneo de Trivy SÍ se ejecuta correctamente**
+- ✅ **Los reportes se generan y guardan como artefactos**
+- ✅ **El análisis de seguridad está completo**
+- ⚠️ Solo el upload a GitHub Security tab genera warning (no crítico)
+
+**Solución:** Para repositorios públicos, GitHub Advanced Security es gratuito y puede habilitarse en Settings → Code security and analysis → GitHub Advanced Security.
+
+### 3. Quality Gate de SonarQube
+El Quality Gate también usa `continue-on-error: true` para que el pipeline no falle completamente si no se cumplen todos los criterios de calidad, permitiendo ver los resultados y tomar decisiones informadas.
+
+**Resumen:** Estos warnings son **esperados e intencionales** y no afectan la funcionalidad del pipeline. Todos los análisis se ejecutan correctamente y generan sus respectivos reportes.
+
+---
+
+## �️ Paso 13: Resumen de Seguridad Final
+
+Al final de cada ejecución del pipeline, GitHub genera un resumen consolidado en formato Markdown:
+
+�📸 **Captura: Resumen de Seguridad**
 
 ![Security Summary Report](./img/security-summary-report.png)
+
+**Contenido del Resumen:**
+- Información del build (branch, commit, autor)
+- Estado de cada análisis (Trivy, SonarQube, Tests)
+- Enlaces a reportes detallados
+- Acceso a artefactos descargables
 
 ---
 
