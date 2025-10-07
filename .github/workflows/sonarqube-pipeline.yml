@@ -11,9 +11,9 @@ on:
 
 # Permisos necesarios para GitHub Advanced Security
 permissions:
-  contents: read          # Leer el código del repositorio
-  security-events: write  # Escribir eventos de seguridad (SARIF upload)
-  actions: read           # Leer metadatos de GitHub Actions
+  contents: read # Leer el código del repositorio
+  security-events: write # Escribir eventos de seguridad (SARIF upload)
+  actions: read # Leer metadatos de GitHub Actions
 
 env:
   NODE_VERSION: "18"
