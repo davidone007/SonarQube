@@ -8,20 +8,12 @@
 
 Este documento presenta un reporte completo de la implementación de **SonarQube** para el análisis de calidad de código del proyecto **AromaLife Backend**, un sistema de e-commerce desarrollado en NestJS/TypeScript.
 
-El proyecto se desarrolló en dos fases:
-- **Parte 1:** Im**Resumen:** Estos warnings son **esperados e intencionales** y no afectan la funcionalidad del pipeline. Todos los análisis se ejecutan correctamente y generan sus respectivos reportes.
-
----
-
-## 🛡️ Paso 14: Resumen de Seguridad Final
-
-Al final de cada ejecución del pipeline, GitHub genera un resumen consolidado en formato Markdown:ación local usando Docker Compose
-- **Parte 2:** Implementación en la nube de Azure con infraestructura como código (Terraform) y pipeline de CI/CD
-
 **Contexto del Proyecto:**  
 AromaLife es un proyecto de e-commerce de velas aromáticas que fue desarrollado previamente en un trabajo anterior del curso. Este reporte documenta la integración de herramientas de análisis de calidad y seguridad del código.
 
+El proyecto se desarrolló en dos fases:
 ---
+
 
 # 📦 PARTE 1: Implementación Local con Docker Compose
 
@@ -456,6 +448,23 @@ El pipeline también genera reportes de cobertura de código usando Jest.
 
 ---
 
+## 🛡️ Paso 14: Resumen de Seguridad Final
+
+Al final de cada ejecución del pipeline, GitHub genera un resumen consolidado en formato Markdown:
+
+�📸 **Captura: Resumen de Seguridad**
+
+![Security Summary Report](./img/security-summary-report.png)
+
+**Contenido del Resumen:**
+- Información del build (branch, commit, autor)
+- Estado de cada análisis (Trivy, SonarQube, Tests)
+- Enlaces a reportes detallados
+- Acceso a artefactos descargables
+
+
+--
+
 ## ⚠️ Nota Importante sobre Warnings en el Pipeline
 
 Durante la ejecución del pipeline pueden aparecer algunos **warnings** (advertencias) que no afectan el funcionamiento general:
@@ -497,22 +506,6 @@ Una vez habilitado, los resultados de Trivy aparecerán en la pestaña **Securit
 El Quality Gate también usa `continue-on-error: true` para que el pipeline no falle completamente si no se cumplen todos los criterios de calidad, permitiendo ver los resultados y tomar decisiones informadas.
 
 **Resumen:** Estos warnings son **esperados e intencionales** y no afectan la funcionalidad del pipeline. Todos los análisis se ejecutan correctamente y generan sus respectivos reportes.
-
----
-
-## �️ Paso 13: Resumen de Seguridad Final
-
-Al final de cada ejecución del pipeline, GitHub genera un resumen consolidado en formato Markdown:
-
-�📸 **Captura: Resumen de Seguridad**
-
-![Security Summary Report](./img/security-summary-report.png)
-
-**Contenido del Resumen:**
-- Información del build (branch, commit, autor)
-- Estado de cada análisis (Trivy, SonarQube, Tests)
-- Enlaces a reportes detallados
-- Acceso a artefactos descargables
 
 ---
 
