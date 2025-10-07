@@ -1,0 +1,33 @@
+==========================================
+  ✅ Despliegue Completado Exitosamente
+==========================================
+
+📊 Información de Despliegue:
+  • IP Pública: 74.235.3.10
+  • URL SonarQube: http://74.235.3.10:9000
+  • SSH: ssh azureuser@74.235.3.10
+
+🔐 Credenciales de la VM:
+   Usuario: azureuser
+   Contraseña: SonarQube2024!@#
+
+🔐 Credenciales de SonarQube:
+   Usuario: admin
+   Contraseña: admin
+   ⚠️  ¡CAMBIA LA CONTRASEÑA EN EL PRIMER LOGIN!
+
+⏱️  Nota: SonarQube tardará aproximadamente 2-3 minutos
+   en estar disponible después de que la VM esté lista.
+
+📝 Próximos pasos:
+   1. Espera 2-3 minutos para que SonarQube esté disponible
+   2. Accede a http://74.235.3.10:9000
+   3. Inicia sesión con admin/admin
+   4. Cambia la contraseña
+   5. Crea el proyecto: aromalife-backend
+   6. Genera un token de autenticación
+   7. Agrega los secrets en GitHub:
+      - SONAR_TOKEN: <tu-token>
+      - SONAR_HOST_URL: http://74.235.3.10:9000
+
+==========================================
