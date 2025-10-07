@@ -9,7 +9,13 @@
 Este documento presenta un reporte completo de la implementación de **SonarQube** para el análisis de calidad de código del proyecto **AromaLife Backend**, un sistema de e-commerce desarrollado en NestJS/TypeScript.
 
 El proyecto se desarrolló en dos fases:
-- **Parte 1:** Implementación local usando Docker Compose
+- **Parte 1:** Im**Resumen:** Estos warnings son **esperados e intencionales** y no afectan la funcionalidad del pipeline. Todos los análisis se ejecutan correctamente y generan sus respectivos reportes.
+
+---
+
+## 🛡️ Paso 14: Resumen de Seguridad Final
+
+Al final de cada ejecución del pipeline, GitHub genera un resumen consolidado en formato Markdown:ación local usando Docker Compose
 - **Parte 2:** Implementación en la nube de Azure con infraestructura como código (Terraform) y pipeline de CI/CD
 
 **Contexto del Proyecto:**  
@@ -402,7 +408,26 @@ Los resultados del análisis son visibles en el dashboard de SonarQube en Azure.
 
 ---
 
-## 🛡️ Paso 12: Reporte de Seguridad con Trivy
+## � Paso 12: Code Scanning en GitHub Security
+
+Una vez habilitado GitHub Advanced Security, los resultados del escaneo de Trivy son visibles en la pestaña **Security** del repositorio.
+
+📸 **Captura: Code Scanning Alerts**
+
+![Code Scanning](./img/code-scanning.png)
+
+**Funcionalidades de Code Scanning:**
+- ✅ Visualización de vulnerabilidades detectadas por Trivy
+- ✅ Alertas automáticas en cada push
+- ✅ Clasificación por severidad (Critical, High, Medium, Low)
+- ✅ Seguimiento del estado de cada vulnerabilidad
+- ✅ Integración con GitHub Security Advisory Database
+
+**Acceso:** Settings → Code security and analysis → GitHub Advanced Security → Enable
+
+---
+
+## �🛡️ Paso 13: Reporte de Seguridad con Trivy
 
 El análisis de seguridad con Trivy genera un reporte detallado de vulnerabilidades encontradas en las dependencias del proyecto.
 
@@ -461,6 +486,12 @@ El upload de resultados de Trivy en formato SARIF puede generar una advertencia:
 - ⚠️ Solo el upload a GitHub Security tab genera warning (no crítico)
 
 **Solución:** Para repositorios públicos, GitHub Advanced Security es gratuito y puede habilitarse en Settings → Code security and analysis → GitHub Advanced Security.
+
+Una vez habilitado, los resultados de Trivy aparecerán en la pestaña **Security** → **Code scanning** de GitHub:
+
+📸 **Captura: Code Scanning en GitHub**
+
+![Code Scanning](./img/code-scanning.png)
 
 ### 3. Quality Gate de SonarQube
 El Quality Gate también usa `continue-on-error: true` para que el pipeline no falle completamente si no se cumplen todos los criterios de calidad, permitiendo ver los resultados y tomar decisiones informadas.
