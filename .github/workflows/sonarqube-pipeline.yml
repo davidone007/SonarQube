@@ -3,21 +3,21 @@ name: CI/CD - SonarQube Analysis with Trivy
 on:
   push:
     branches:
-      - '**'  # Se ejecuta en cada push a cualquier rama
+      - "**" # Se ejecuta en cada push a cualquier rama
   pull_request:
     branches:
       - main
       - develop
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: "18"
 
 jobs:
   # Job 1: Análisis de seguridad con Trivy
   trivy-security-scan:
     name: 🔒 Trivy Security Scan
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -27,28 +27,28 @@ jobs:
       - name: 🔍 Run Trivy vulnerability scanner (Filesystem)
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '0'  # No fallar el build por vulnerabilidades
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH"
+          exit-code: "0" # No fallar el build por vulnerabilidades
 
       - name: 📊 Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
         if: always()
-        continue-on-error: true  # No fallar si GitHub Advanced Security no está habilitado
+        continue-on-error: true # No fallar si GitHub Advanced Security no está habilitado
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
       - name: 🔍 Run Trivy vulnerability scanner (JSON report)
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'json'
-          output: 'trivy-report.json'
-          severity: 'CRITICAL,HIGH,MEDIUM'
+          scan-type: "fs"
+          scan-ref: "."
+          format: "json"
+          output: "trivy-report.json"
+          severity: "CRITICAL,HIGH,MEDIUM"
 
       - name: 📤 Upload Trivy JSON report
         uses: actions/upload-artifact@v4
@@ -63,7 +63,7 @@ jobs:
     name: 🧪 Tests & Coverage
     runs-on: ubuntu-latest
     needs: trivy-security-scan
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -74,7 +74,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 📦 Install dependencies
         run: npm ci
@@ -96,18 +96,18 @@ jobs:
     name: 📊 SonarQube Analysis
     runs-on: ubuntu-latest
     needs: test-and-coverage
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+          fetch-depth: 0 # Shallow clones should be disabled for better analysis
 
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 📦 Install dependencies
         run: npm ci
@@ -135,7 +135,7 @@ jobs:
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        continue-on-error: true  # No fallar el build si no pasa el Quality Gate
+        continue-on-error: true # No fallar el build si no pasa el Quality Gate
 
   # Job 4: Reporte consolidado
   security-report:
@@ -143,7 +143,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [trivy-security-scan, sonarqube-analysis]
     if: always()
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4

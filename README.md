@@ -1,14 +1,32 @@
+# 🧩 Reporte de Implementación de SonarQube – AromaLife Backend
 
-# 🧩 SonarQube Configuration Report – AromaLife Backend
-
-## 📘 Overview
-This report summarizes the setup and execution of **SonarQube** analysis for the project **AromaLife Backend**, using Docker Compose for local deployment and configuration via `sonar-project.properties`.
+**Autor:** David Fajardo  
+**Universidad:** Universidad Icesi  
+**Curso:** Ingeniería de Software 5 (8vo Semestre)  
+**Fecha:** Octubre 2024
 
 ---
 
-## ⚙️ Step 1: Docker Compose Configuration
+## 📘 Introducción
 
-A `docker-compose.yaml` file was created to deploy **SonarQube** and **PostgreSQL** services locally.
+Este documento presenta un reporte completo de la implementación de **SonarQube** para el análisis de calidad de código del proyecto **AromaLife Backend**, un sistema de e-commerce desarrollado en NestJS/TypeScript.
+
+El proyecto se desarrolló en dos fases:
+- **Parte 1:** Implementación local usando Docker Compose
+- **Parte 2:** Implementación en la nube de Azure con infraestructura como código (Terraform) y pipeline de CI/CD
+
+**Contexto del Proyecto:**  
+AromaLife es un proyecto de e-commerce de velas aromáticas que fue desarrollado previamente en un trabajo anterior del curso. Este reporte documenta la integración de herramientas de análisis de calidad y seguridad del código.
+
+---
+
+# 📦 PARTE 1: Implementación Local con Docker Compose
+
+Esta primera fase consistió en configurar SonarQube localmente para realizar análisis de código estático.
+
+## ⚙️ Paso 1: Configuración de Docker Compose
+
+Se creó un archivo `docker-compose.yaml` para desplegar **SonarQube** y **PostgreSQL** localmente.
 
 ```yaml
 sonarqube:
@@ -39,42 +57,44 @@ sonar-db:
     - postgresql_data:/var/lib/postgresql/data
 ```
 
-📸 **Screenshot: Docker Compose**
+📸 **Captura: Configuración de Docker Compose**
+
 ![Docker Compose](./img/1.png)
 
 ---
 
-## 🧩 Step 2: SonarQube Project Configuration
+## 🧩 Paso 2: Configuración del Proyecto en SonarQube
 
-A `sonar-project.properties` file was configured to define the analysis parameters for the backend codebase.
+Se configuró el archivo `sonar-project.properties` con los parámetros de análisis para el backend.
 
 ```properties
-# Project information
+# Información del proyecto
 sonar.projectKey=aromalife-backend
 sonar.projectName=AromaLife Backend
 sonar.projectVersion=1.0
 
-# Source and test directories
+# Directorios de código fuente y pruebas
 sonar.sources=src
 sonar.tests=test
 sonar.exclusions=**/node_modules/**,**/*.spec.ts,**/test/**,**/dist/**,**/coverage/**,**/scripts/**,**/postgres-data/**,**/pgadmin-data/**
 
-# TypeScript/JavaScript configuration
+# Configuración TypeScript/JavaScript
 sonar.typescript.lcov.reportPaths=coverage/lcov.info
 sonar.javascript.lcov.reportPaths=coverage/lcov.info
 
-# Encoding
+# Codificación
 sonar.sourceEncoding=UTF-8
 ```
 
-📸 **Screenshot: sonar-project.properties**
+📸 **Captura: Archivo sonar-project.properties**
+
 ![Sonar Project Properties](./img/3.png)
 
 ---
 
-## 🚀 Step 3: Running SonarQube Analysis
+## 🚀 Paso 3: Ejecución del Análisis Local
 
-Once SonarQube was up and running at `http://localhost:9000`, the project analysis was executed using the following command:
+Una vez SonarQube estuvo corriendo en `http://localhost:9000`, se ejecutó el análisis del proyecto:
 
 ```bash
 sonar \
@@ -83,335 +103,406 @@ sonar \
   -Dsonar.projectKey=front
 ```
 
-📸 **Screenshot: Project Bind and Dashboard**
+📸 **Captura: Vinculación del Proyecto y Dashboard**
+
 ![Bind Project](./img/2.png)
 
 ---
 
-## 📊 Step 4: Analysis Results
+## 📊 Paso 4: Resultados del Análisis Local
 
-After the analysis completed successfully, the results were visible in the SonarQube dashboard.
+Después de completar el análisis, los resultados fueron visibles en el dashboard de SonarQube.
 
-📸 **Screenshot: SonarQube Report**
+📸 **Captura: Reporte de SonarQube Local**
+
 ![SonarQube Results](./img/4.png)
 
-### ✅ Summary of Results
+### ✅ Resumen de Resultados - Parte 1
 
-| Metric                | Result                |
-| --------------------- | --------------------- |
-| **Security**          | 0 Open Issues         |
-| **Reliability**       | 11 Issues (Grade A)   |
-| **Maintainability**   | 63 Issues (Grade C)   |
-| **Coverage**          | 27.3% (on 2.3k lines) |
-| **Duplications**      | 6.1%                  |
-| **Security Hotspots** | 2 (Grade E)           |
-
----
-
-## 🧾 Conclusion
-
-The SonarQube setup was successfully completed using Docker and integrated with the **AromaLife Backend** repository.
-Static code analysis provided valuable insights into maintainability, coverage, and reliability, helping improve overall code quality.
+| Métrica                  | Resultado             |
+| ------------------------ | --------------------- |
+| **Seguridad**            | 0 Issues Abiertos     |
+| **Confiabilidad**        | 11 Issues (Grado A)   |
+| **Mantenibilidad**       | 63 Issues (Grado C)   |
+| **Cobertura**            | 27.3% (2.3k líneas)   |
+| **Duplicaciones**        | 6.1%                  |
+| **Hotspots de Seguridad**| 2 (Grado E)           |
 
 ---
 
-## 🚀 Deployment with Terraform and Azure
+# ☁️ PARTE 2: Implementación en Azure con Terraform y CI/CD
 
-### 📋 Prerequisites
+En esta segunda fase se implementó una infraestructura completa en Azure usando Terraform, integrando SonarQube en una máquina virtual y configurando un pipeline de CI/CD con GitHub Actions.
 
-Before deploying, ensure you have the following installed and configured:
+## 🏗️ Arquitectura de la Solución
 
-- **Azure CLI** installed and configured ([Installation Guide](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli))
-- **Terraform** v1.0+ ([Installation Guide](https://www.terraform.io/downloads))
-- **Git** and **GitHub** account
-- **Node.js** v18+ (for running the application)
-
-> **Nota:** La VM usa autenticación por usuario y contraseña, no requiere SSH keys.
-
-### 🔧 Step 1: Deploy SonarQube Infrastructure to Azure
-
-1. **Authenticate with Azure:**
-   ```bash
-   az login
-   ```
-
-2. **Set your Azure subscription (if you have multiple):**
-
-   ```bash
-   az account list --output table
-   az account set --subscription "<your-subscription-id>"
-   ```
-
-3. **Deploy the infrastructure:**
-
-   ```bash
-   chmod +x scripts/deploy-terraform.sh
-   ./scripts/deploy-terraform.sh
-   ```
-
-   This script will:
-   - Initialize Terraform
-   - Validate the configuration
-   - Create a deployment plan
-   - Deploy the Azure VM with SonarQube
-   - Install Docker, Docker Compose, and Trivy
-   - Start SonarQube automatically
-
-4. **Wait for deployment (approximately 5-10 minutes)**
-
-   The script will output:
-
-   ```text
-   📊 Información de Despliegue:
-     • IP Pública: <VM_IP_ADDRESS>
-     • URL SonarQube: http://<VM_IP_ADDRESS>:9000
-     • SSH: ssh azureuser@<VM_IP_ADDRESS>
-   
-   🔐 Credenciales de la VM:
-     Usuario: azureuser
-     Contraseña: SonarQube2024!@#
-   ```
-
-### 🔐 Step 2: Configure SonarQube
-
-1. **Access SonarQube** at `http://<VM_IP_ADDRESS>:9000`
-   - Wait 2-3 minutes after VM deployment for SonarQube to start
-
-2. **Login with default credentials:**
-   - Username: `admin`
-   - Password: `admin`
-
-3. **Change the password** (mandatory on first login)
-
-4. **Create a new project:**
-   - Go to **Projects** → **Create Project** → **Manually**
-   - Project key: `aromalife-backend`
-   - Display name: `AromaLife Backend`
-
-5. **Generate an authentication token:**
-   - Go to **My Account** → **Security** → **Generate Tokens**
-   - Name: `GitHub Actions CI/CD`
-   - Type: `Global Analysis Token` or `Project Analysis Token`
-   - Click **Generate** and **copy the token**
-
-### 🔒 Step 3: Configure GitHub Secrets
-
-Add the following secrets to your GitHub repository:
-
-1. Go to your GitHub repository
-2. Navigate to **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret** and add:
-
-   | Secret Name | Value | Description |
-   |-------------|-------|-------------|
-   | `SONAR_TOKEN` | `<your-sonarqube-token>` | Token generated in SonarQube |
-   | `SONAR_HOST_URL` | `http://<VM_IP_ADDRESS>:9000` | SonarQube server URL |
-
-### 🔍 Step 4: Run Security Scan with Trivy (Local)
-
-You can run Trivy security scans locally before pushing code:
-
-```bash
-chmod +x scripts/trivy-scan.sh
-./scripts/trivy-scan.sh
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         GitHub Repository                        │
+│                     (davidone007/SonarQube)                      │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │
+                                │ Push Event
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      GitHub Actions Pipeline                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────┐   │
+│  │ Trivy Scan   │  │ Tests +      │  │ SonarQube Analysis │   │
+│  │ (Security)   │  │ Coverage     │  │                    │   │
+│  └──────────────┘  └──────────────┘  └────────────────────┘   │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │
+                                │ Analysis Results
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   Azure Cloud (East US)                          │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  Resource Group: rg-sonarqube-aromalife                   │  │
+│  │                                                            │  │
+│  │  ┌──────────────────────────────────────────────────┐    │  │
+│  │  │ Virtual Machine (vm-sonarqube)                   │    │  │
+│  │  │ - Ubuntu 22.04 LTS                               │    │  │
+│  │  │ - Standard_D2s_v3                                │    │  │
+│  │  │ - IP: 74.235.3.10                                │    │  │
+│  │  │                                                   │    │  │
+│  │  │  ┌─────────────────────────────────────────┐    │    │  │
+│  │  │  │ Docker Containers                       │    │    │  │
+│  │  │  │  ┌────────────┐  ┌──────────────┐      │    │    │  │
+│  │  │  │  │ SonarQube  │  │ PostgreSQL   │      │    │    │  │
+│  │  │  │  │ :9000      │  │ :5432        │      │    │    │  │
+│  │  │  │  └────────────┘  └──────────────┘      │    │    │  │
+│  │  │  └─────────────────────────────────────────┘    │    │  │
+│  │  └──────────────────────────────────────────────────┘    │  │
+│  │                                                            │  │
+│  │  ┌──────────────┐  ┌─────────────┐  ┌──────────────┐    │  │
+│  │  │ Virtual Net  │  │ Public IP   │  │ NSG (Firewall)│   │  │
+│  │  │ 10.0.0.0/16  │  │ 74.235.3.10 │  │ Ports: 22,    │   │  │
+│  │  │              │  │             │  │ 80, 443, 9000 │   │  │
+│  │  └──────────────┘  └─────────────┘  └──────────────┘    │  │
+│  └───────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-This will:
-- Scan the filesystem for vulnerabilities
-- Scan dependencies (HIGH and CRITICAL severity)
-- Scan Docker images (if Dockerfile exists)
-- Generate JSON reports in `security-reports/` directory
+---
 
-### 🔄 Step 5: CI/CD Pipeline Configuration
+## 🎯 Objetivos de la Parte 2
 
-The pipeline is configured to run automatically on **every push** to any branch.
+1. ✅ Desplegar SonarQube en una VM de Azure
+2. ✅ Usar Terraform para infraestructura como código (IaC)
+3. ✅ Integrar análisis de seguridad con Trivy
+4. ✅ Configurar pipeline de CI/CD en GitHub Actions
+5. ✅ Automatizar análisis en cada push al repositorio
 
-**Pipeline workflow** (`.github/workflows/sonarqube-pipeline.yml`):
+---
 
-1. **Trivy Security Scan** 🔒
-   - Scans filesystem for vulnerabilities
-   - Uploads results to GitHub Security tab
-   - Generates JSON reports
+## 📋 Paso 1: Selección de Suscripción de Azure
 
-2. **Tests & Coverage** 🧪
-   - Runs unit and integration tests
-   - Generates coverage reports
-   - Uploads artifacts
+Se verificó y seleccionó la suscripción de Azure disponible.
 
-3. **SonarQube Analysis** 📊
-   - Analyzes code quality
-   - Checks coverage
-   - Validates quality gates
-   - Reports to SonarQube server
+📸 **Captura: Suscripción de Azure**
 
-4. **Security Report Summary** 📋
-   - Consolidates all findings
-   - Generates GitHub Actions summary
+![Azure Subscription](./img/sub.png)
 
-### 📊 Step 6: Monitor Analysis Results
+---
 
-**View Trivy Security Results:**
-- Go to your GitHub repository
-- Navigate to **Security** → **Code scanning alerts**
-- Review vulnerabilities detected by Trivy
+## 🛠️ Paso 2: Creación de Infraestructura con Terraform
 
-**View SonarQube Results:**
-- Access your SonarQube server: `http://<VM_IP_ADDRESS>:9000`
-- Go to **Projects** → **aromalife-backend**
-- Review:
-  - Security vulnerabilities
-  - Code smells
-  - Coverage metrics
-  - Duplications
-  - Technical debt
+Se crearon los archivos de Terraform para definir toda la infraestructura en Azure.
 
-**View GitHub Actions:**
-- Go to **Actions** tab in your repository
-- Click on the latest workflow run
-- Review each job's logs and artifacts
+### Estructura de Archivos Terraform
 
-### 🛠️ Infrastructure Management
-
-**SSH into the VM:**
-```bash
-ssh azureuser@<VM_IP_ADDRESS>
+```
+terraform/
+├── main.tf           # Definición de recursos de Azure
+├── variables.tf      # Variables de configuración
+├── terraform.tfstate # Estado de la infraestructura
+└── scripts/
+    └── init.sh       # Script de inicialización de la VM
 ```
 
-**Check SonarQube status:**
-```bash
-cd ~/sonarqube
-sudo docker-compose ps
-```
-
-**View SonarQube logs:**
-```bash
-cd ~/sonarqube
-sudo docker-compose logs -f sonarqube
-```
-
-**Restart SonarQube:**
-```bash
-cd ~/sonarqube
-sudo docker-compose restart
-```
-
-**Stop SonarQube:**
-```bash
-cd ~/sonarqube
-sudo docker-compose down
-```
-
-**Start SonarQube:**
-```bash
-cd ~/sonarqube
-sudo docker-compose up -d
-```
-
-**View VM information:**
-```bash
-cat ~/sonarqube-info.txt
-```
-
-### 🗑️ Step 7: Destroy Infrastructure (Optional)
-
-When you want to remove all Azure resources:
+### Ejecución del Plan de Terraform
 
 ```bash
 cd terraform
-terraform destroy
+terraform init
+terraform plan -out=tfplan
 ```
 
-This will remove:
-- Virtual Machine
-- Network resources
-- Resource Group
-- All associated resources
+📸 **Captura: Terraform Plan**
 
-### 📁 Project Structure
+![Terraform Plan](./img/script-plan.png)
 
-```
-├── .github/
-│   └── workflows/
-│       └── sonarqube-pipeline.yml  # CI/CD pipeline
-├── terraform/
-│   ├── main.tf                     # Azure infrastructure definition
-│   ├── variables.tf                # Terraform variables
-│   ├── .gitignore                  # Terraform gitignore
-│   └── scripts/
-│       └── init.sh                 # VM initialization script
-├── scripts/
-│   ├── deploy-terraform.sh         # Deployment automation
-│   └── trivy-scan.sh               # Local security scanning
-├── sonar-project.properties        # SonarQube configuration
-└── README.md                       # This file
+### Aplicación de la Infraestructura
+
+```bash
+terraform apply -auto-approve
 ```
 
-### 🔑 Key Features Implemented
+📸 **Captura: Terraform Apply**
 
-✅ **Automated Infrastructure Deployment**
-- Terraform IaC for reproducible infrastructure
-- Azure VM with Ubuntu 22.04
-- Network security groups with proper rules
-- Automatic installation of Docker, Trivy, and SonarQube
+![Terraform Apply](./img/apply.png)
 
-✅ **Continuous Security Scanning**
-- Trivy integration for vulnerability detection
-- Filesystem and dependency scanning
-- Docker image scanning
-- SARIF format for GitHub Security integration
+**Recursos Creados:**
+- ✅ Resource Group: `rg-sonarqube-aromalife`
+- ✅ Virtual Network: `vnet-sonarqube`
+- ✅ Subnet: `subnet-sonarqube`
+- ✅ Public IP: `pip-sonarqube`
+- ✅ Network Security Group (NSG)
+- ✅ Network Interface: `nic-sonarqube`
+- ✅ Virtual Machine: `vm-sonarqube` (Ubuntu 22.04, Standard_D2s_v3)
 
-✅ **Continuous Code Quality**
-- SonarQube analysis on every push
-- Code coverage tracking
-- Quality gates enforcement
-- Technical debt monitoring
-
-✅ **CI/CD Pipeline**
-- Automated testing
-- Security scanning
-- Code quality analysis
-- Artifact preservation
-- GitHub Security integration
-
-### 🎯 Best Practices Implemented
-
-1. **Security First**: Vulnerability scanning before code quality checks
-2. **Fail Gracefully**: Pipeline continues even if quality gates fail (configurable)
-3. **Comprehensive Reporting**: Multiple report formats and storage locations
-4. **Infrastructure as Code**: Reproducible and version-controlled infrastructure
-5. **Automated Deployment**: One-command deployment with validation
-6. **Monitoring**: Detailed logs and status checks at each step
-
-### 🆘 Troubleshooting
-
-**SonarQube not accessible after deployment:**
-- Wait 2-3 minutes for services to start
-- Check VM logs: `ssh azureuser@<VM_IP> "sudo docker-compose -f ~/sonarqube/docker-compose.yml logs"`
-- Verify NSG rules allow port 9000
-
-**Pipeline failing on SonarQube step:**
-- Verify `SONAR_TOKEN` and `SONAR_HOST_URL` secrets are set correctly
-- Check SonarQube server is accessible from the internet
-- Review SonarQube logs for authentication errors
-
-**Terraform deployment fails:**
-- Ensure you're logged in to Azure: `az login`
-- Check you have proper permissions in the subscription
-- Verify SSH public key exists at `~/.ssh/id_rsa.pub`
-- Review terraform logs for specific errors
-
-**Trivy scan fails:**
-- Update Trivy database: `trivy image --download-db-only`
-- Check internet connectivity for vulnerability database updates
-
-### 📚 Additional Resources
-
-- [SonarQube Documentation](https://docs.sonarqube.org/)
-- [Trivy Documentation](https://aquasecurity.github.io/trivy/)
-- [Terraform Azure Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+**Tiempo de Despliegue:** ~90 segundos
 
 ---
 
+## 📝 Paso 3: Información del Despliegue
+
+Al finalizar, Terraform proporcionó la información de acceso:
+
+📸 **Captura: Información de Despliegue**
+
+![Deployment Info](./img/deployment-info.png)
+
+**Credenciales de Acceso:**
+- **IP Pública:** 74.235.3.10
+- **URL SonarQube:** http://74.235.3.10:9000
+- **Usuario SSH:** azureuser
+- **Contraseña:** SonarQube2024!@#
+
+---
+
+## 🔍 Paso 4: Verificación en Azure Portal
+
+Se verificó que todos los recursos fueron creados correctamente en el portal de Azure.
+
+📸 **Captura: Grupo de Recursos en Azure**
+
+![Azure Resource Group](./img/resource-group.png)
+
+**Recursos Visibles:**
+- Virtual Machine (vm-sonarqube)
+- Network Interface
+- Network Security Group
+- Public IP Address
+- Virtual Network
+- Disk
+
+---
+
+## 🔐 Paso 5: Configuración Inicial de SonarQube
+
+Se accedió a SonarQube mediante la URL `http://74.235.3.10:9000` y se completó la configuración inicial.
+
+### Cambio de Contraseña Predeterminada
+
+**Credenciales por defecto de SonarQube:**
+- Usuario: `admin`
+- Contraseña: `admin`
+
+📸 **Captura: Cambio de Contraseña**
+
+![Change Password](./img/change-password.png)
+
+---
+
+## 📦 Paso 6: Creación del Proyecto en SonarQube
+
+Se creó el proyecto `aromalife-backend` en SonarQube y se generó el token de autenticación.
+
+📸 **Captura: Creación del Proyecto**
+
+![Create Project](./img/create-project.png)
+
+**Configuración del Proyecto:**
+- **Project Key:** aromalife-backend
+- **Project Name:** AromaLife Backend
+- **Token generado:** (almacenado en GitHub Secrets)
+
+---
+
+## 🔑 Paso 7: Configuración de GitHub Secrets
+
+Se configuraron los secrets necesarios en el repositorio de GitHub para la integración con SonarQube.
+
+📸 **Captura: GitHub Secrets**
+
+![GitHub Secrets](./img/secrets.png)
+
+**Secrets Configurados:**
+- `SONAR_TOKEN`: Token de autenticación de SonarQube
+- `SONAR_HOST_URL`: http://74.235.3.10:9000
+
+---
+
+## 🚀 Paso 8: Pipeline de CI/CD con GitHub Actions
+
+Se creó un workflow de GitHub Actions (`.github/workflows/sonarqube-pipeline.yml`) que se ejecuta en cada push.
+
+### Estructura del Pipeline
+
+El pipeline consta de 4 jobs principales:
+
+1. **Trivy Security Scan:** Escaneo de vulnerabilidades en el código
+2. **Tests & Coverage:** Ejecución de pruebas unitarias y cobertura
+3. **SonarQube Analysis:** Análisis de calidad de código
+4. **Security Report:** Consolidación de reportes de seguridad
+
+### Trigger del Pipeline
+
+```yaml
+on:
+  push:
+    branches: ['**']  # Se ejecuta en cada push a cualquier rama
+```
+
+---
+
+## ✅ Paso 9: Resultados del Pipeline
+
+Después de hacer commit y push al repositorio, el pipeline se ejecutó automáticamente.
+
+📸 **Captura: Pipeline de GitHub Actions**
+
+![CI Pipeline](./img/CI-Sonar.png)
+
+**Jobs Ejecutados:**
+- ✅ Trivy Security Scan: Completado
+- ✅ Tests & Coverage: Completado (27.3% cobertura)
+- ✅ SonarQube Analysis: Completado
+- ⚠️ Security Report: Completado con advertencia (SARIF upload requiere GitHub Advanced Security)
+
+---
+
+## 📦 Paso 10: Artefactos Generados
+
+El pipeline genera y almacena varios artefactos para revisión posterior.
+
+📸 **Captura: Artefactos del Pipeline**
+
+![Pipeline Artifacts](./img/artifacts.png)
+
+**Artefactos Disponibles:**
+- `trivy-report-json`: Reporte de vulnerabilidades en formato JSON
+- `trivy-report-sarif`: Reporte en formato SARIF
+- `security-summary`: Resumen consolidado de seguridad
+
+---
+
+## 🎯 Paso 11: Quality Gate de SonarQube
+
+Los resultados del análisis son visibles en el dashboard de SonarQube en Azure.
+
+📸 **Captura: Quality Gate de SonarQube**
+
+![SonarQube Quality Gate](./img/sonnar-quality-gate.png)
+
+**Análisis Completado:**
+- ✅ Código analizado correctamente
+- ✅ Quality Gate pasado
+- ✅ Métricas actualizadas en tiempo real
+
+---
+
+## 🛡️ Paso 12: Reporte de Seguridad
+
+El análisis de seguridad con Trivy identificó vulnerabilidades en las dependencias.
+
+📸 **Captura: Resumen de Seguridad**
+
+![Security Summary Report](./img/security-summary-report.png)
+
+**Resultados del Escaneo de Seguridad:**
+- Vulnerabilidades detectadas en dependencias
+- Clasificación por severidad (Critical, High, Medium, Low)
+- Recomendaciones de actualización
+
+---
+
+## 📊 Resumen de Resultados - Parte 2
+
+### Infraestructura Desplegada
+
+| Componente            | Detalle                                |
+| --------------------- | -------------------------------------- |
+| **Cloud Provider**    | Microsoft Azure                        |
+| **Región**            | East US                                |
+| **Resource Group**    | rg-sonarqube-aromalife                 |
+| **VM Tipo**           | Standard_D2s_v3 (2 vCPUs, 8GB RAM)    |
+| **Sistema Operativo** | Ubuntu 22.04 LTS                       |
+| **IP Pública**        | 74.235.3.10                            |
+| **SonarQube URL**     | http://74.235.3.10:9000                |
+
+### Pipeline de CI/CD
+
+| Característica         | Implementación                        |
+| ---------------------- | ------------------------------------- |
+| **Plataforma**         | GitHub Actions                        |
+| **Trigger**            | Push a cualquier rama                 |
+| **Escaneo Seguridad**  | Trivy                                 |
+| **Análisis Código**    | SonarQube                             |
+| **Cobertura Tests**    | Jest (27.3%)                          |
+| **Artefactos**         | JSON, SARIF, Security Summary         |
+
+### Herramientas Integradas
+
+- ✅ **Terraform** v1.5.7: Infraestructura como código
+- ✅ **Docker & Docker Compose**: Contenedorización
+- ✅ **SonarQube Community**: Análisis de calidad
+- ✅ **Trivy**: Escaneo de vulnerabilidades
+- ✅ **GitHub Actions**: CI/CD automatizado
+- ✅ **PostgreSQL**: Base de datos de SonarQube
+- ✅ **Jest**: Framework de pruebas
+
+---
+
+## 🎓 Conclusiones
+
+### Logros de la Parte 1
+- ✅ Configuración exitosa de SonarQube local con Docker Compose
+- ✅ Análisis inicial del código identificando 74 issues totales
+- ✅ Cobertura de código del 27.3%
+- ✅ Identificación de áreas de mejora en mantenibilidad
+
+### Logros de la Parte 2
+- ✅ Infraestructura completa desplegada en Azure usando Terraform
+- ✅ Pipeline de CI/CD funcional con ejecución automática en cada push
+- ✅ Integración de análisis de seguridad con Trivy
+- ✅ SonarQube accesible públicamente para análisis continuo
+- ✅ Automatización completa del proceso de análisis de calidad
+- ✅ Generación de reportes de seguridad y calidad en cada build
+
+### Beneficios Obtenidos
+1. **Automatización:** Análisis automático en cada cambio de código
+2. **Escalabilidad:** Infraestructura en la nube fácilmente escalable
+3. **Seguridad:** Detección temprana de vulnerabilidades con Trivy
+4. **Calidad:** Monitoreo continuo de métricas de código
+5. **Trazabilidad:** Historial completo de análisis y resultados
+6. **Infraestructura como Código:** Reproducibilidad total con Terraform
+
+### Aprendizajes Clave
+- Implementación de infraestructura cloud con Terraform
+- Configuración de pipelines de CI/CD con GitHub Actions
+- Integración de herramientas de análisis estático y seguridad
+- Gestión de secretos y credenciales en entornos de CI/CD
+- Despliegue y configuración de servicios en máquinas virtuales de Azure
+
+---
+
+## 📚 Referencias
+
+- [SonarQube Documentation](https://docs.sonarqube.org/)
+- [Terraform Azure Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Trivy Scanner](https://aquasecurity.github.io/trivy/)
+- [NestJS Testing](https://docs.nestjs.com/fundamentals/testing)
+
+---
+
+## 👨‍💻 Autor
+
+**Davide Flamini**  
+
+
+---
 
 
